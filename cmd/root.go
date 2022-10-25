@@ -17,8 +17,8 @@ import (
 var rootCmd = &cobra.Command{
 	Use:   "kvm",
 	Short: "Easily switch between kubectl version",
-	Long: `Managing kubectl versions can help you when managing multiple clusters
-with different versions, can make you fully compatible with your clusters`,
+	Long: `Managing kubectl versions can help you when managing multiple clusters with different versions
+and can make you fully compatible with your clusters.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		tags, err := helper.GetVersions()
 		if err != nil {
