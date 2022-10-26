@@ -1,4 +1,4 @@
-module kvm
+module github.com/mhkarimi1383/kvm
 
 go 1.19
 
@@ -6,6 +6,7 @@ require (
 	github.com/cavaliergopher/grab/v3 v3.0.1
 	github.com/google/go-github/v48 v48.0.0
 	github.com/ktr0731/go-fuzzyfinder v0.7.0
+	github.com/schollz/progressbar/v3 v3.11.0
 	github.com/spf13/cobra v1.6.1
 )
 
@@ -21,7 +22,6 @@ require (
 	github.com/nsf/termbox-go v1.1.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rivo/uniseg v0.4.2 // indirect
-	github.com/schollz/progressbar/v3 v3.11.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
 	golang.org/x/sys v0.1.0 // indirect
