@@ -17,4 +17,7 @@ and put the following line into your `.bashrc` or `.zshrc`
 export PATH="$HOME/.kvm/bin:$PATH"
 ```
 
-then grab the package binary and put it into a dir that is covered by `$PATH`
+install package itself by running
+```shell
+go install github.com/mhkarimi1383/kvm@latest
+```

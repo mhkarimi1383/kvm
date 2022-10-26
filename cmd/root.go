@@ -20,50 +20,66 @@ var rootCmd = &cobra.Command{
 	Long: `Managing kubectl versions can help you when managing multiple clusters with different versions
 and can make you fully compatible with your clusters.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		tags, err := helper.GetVersions()
-		if err != nil {
-			panic(err)
-		}
-		idx, err := fuzzyfinder.Find(tags,
-			func(i int) string {
-				return tags[i]
-			}, fuzzyfinder.WithPreviewWindow(func(i, w, h int) string {
-				if i == -1 {
-					return ""
+		page := 1
+		for {
+			tags := []string{
+				"More...",
+			}
+			versionTags, err := helper.GetVersions(page)
+			tags = append(tags, versionTags...)
+			if err != nil {
+				panic(err)
+			}
+			idx, err := fuzzyfinder.Find(tags,
+				func(i int) string {
+					return tags[i]
+				}, fuzzyfinder.WithPreviewWindow(func(i, w, h int) string {
+					if i == -1 {
+						return ""
+					}
+					if tags[i] != "More..." {
+						return fmt.Sprintf("Change log and more info:\n  https://github.com/kubernetes/kubernetes/releases/tag/%s", tags[i])
+					} else {
+						return "Load more tags"
+					}
+				}))
+			if err != nil {
+				panic(err)
+			}
+			version := tags[idx]
+			homePath, err := os.UserHomeDir()
+			if err != nil {
+				panic(err)
+			}
+			fmt.Printf("selected: %v\n", version)
+			if version == "More..." {
+				page += 1
+			} else {
+				basePath := homePath + "/.kvm/"
+				binPath := homePath + "/.kvm/bin/"
+				if _, err := os.Stat(basePath + "kubectl-" + version); errors.Is(err, os.ErrNotExist) {
+					path, err := helper.DownloadKubectlBinary(version)
+					if err != nil {
+						panic(err)
+					}
+					err = helper.MoveFile(path, basePath+"kubectl-"+version)
+					if err != nil {
+						panic(err)
+					}
+				} else if err != nil {
+					panic(err)
 				}
-				return fmt.Sprintf("Change log and more info:\n  https://github.com/kubernetes/kubernetes/releases/tag/%s", tags[i])
-			}))
-		if err != nil {
-			panic(err)
-		}
-		version := tags[idx]
-		homePath, err := os.UserHomeDir()
-		if err != nil {
-			panic(err)
-		}
-		fmt.Printf("selected: %v\n", version)
-		basePath := homePath + "/.kvm/"
-		binPath := homePath + "/.kvm/bin/"
-		if _, err := os.Stat(basePath + "kubectl-" + version); errors.Is(err, os.ErrNotExist) {
-			path, err := helper.DownloadKubectlBinary(version)
-			if err != nil {
-				panic(err)
+				os.Remove(binPath + "kubectl")
+				err = os.Symlink(basePath+"kubectl-"+version, binPath+"kubectl")
+				if err != nil {
+					panic(err)
+				}
+				err = os.Chmod(basePath+"kubectl-"+version, 0775)
+				if err != nil {
+					panic(err)
+				}
+				return
 			}
-			err = helper.MoveFile(path, basePath+"kubectl-"+version)
-			if err != nil {
-				panic(err)
-			}
-		} else if err != nil {
-			panic(err)
-		}
-		os.Remove(binPath + "kubectl")
-		err = os.Symlink(basePath+"kubectl-"+version, binPath+"kubectl")
-		if err != nil {
-			panic(err)
-		}
-		err = os.Chmod(basePath+"kubectl-"+version, 0775)
-		if err != nil {
-			panic(err)
 		}
 	},
 }

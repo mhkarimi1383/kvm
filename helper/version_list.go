@@ -5,11 +5,11 @@ import (
 	"github.com/google/go-github/v48/github"
 )
 
-func GetVersions() ([]string, error) {
+func GetVersions(page int) ([]string, error) {
 	gh := github.NewClient(nil)
 	tags, _, err := gh.Repositories.ListTags(context.TODO(), "kubernetes", "kubernetes", &github.ListOptions{
-		Page:    1,
-		PerPage: 15,
+		Page:    page,
+		PerPage: 100,
 	})
 	if err != nil {
 		return nil, err
