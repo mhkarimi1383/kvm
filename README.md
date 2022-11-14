@@ -6,6 +6,8 @@ Managing kubectl versions can help you when managing multiple clusters with diff
 
 ## Install
 
+> Before getting started make sure kubectl is not install to varify that `command -v kubectl` should fail
+
 Make required paths ready by running
 ```shell
 mkdir -p "$HOME/.kvm/bin/"
